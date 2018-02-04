@@ -1,6 +1,6 @@
 #
 #Install-GIMP.ps1
-#Installs EXE applications in Microsoft Intune
+#Installs EXE applications with Microsoft Intune
 #04.02.2018
 #http://blog.forsbakk.priv.no/
 #
