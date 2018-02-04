@@ -50,3 +50,4 @@ $Applications = Get-Content $AppConfig | ConvertFrom-Json
 foreach ($app in $Applications) {
     Install-EXE -AppName $app.Name -Installer $app.Installer -InstArgs $app.InstArgs -Uninstaller $app.Uninstaller -UninstArgs $app.UninstArgs -appLocURL $app.appLocURL -wrkDir $app.wrkDir -detection $app.detection -Mode $app.Mode
 }
+Remove-Item $AppConfig -Force
