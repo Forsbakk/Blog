@@ -48,5 +48,5 @@ $AppConfig = $env:TEMP + "\AppConfig.JSON"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Dynamic%20EXE%20installer%20for%20Intune/config.json" -OutFile $AppConfig
 $Applications = Get-Content $AppConfig | ConvertFrom-Json
 foreach ($app in $Applications) {
-    Install-EXE -AppName $app.Name -Installer $app.Installer -InstArgs $app.InstArgs -Uninstaller $app.Uninstaller -UninstArgs $app.UninstArgs -appLocURL $app.appLocURL -wrkDir $($app.wrkDir) -detection $app.detection -Mode $app.Mode
+    Install-EXE -AppName $app.Name -Installer $app.Installer -InstArgs $app.InstArgs -Uninstaller $app.Uninstaller -UninstArgs $app.UninstArgs -appLocURL $app.appLocURL -wrkDir $app.wrkDir -detection $app.detection -Mode $app.Mode
 }
