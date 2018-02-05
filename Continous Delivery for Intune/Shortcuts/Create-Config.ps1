@@ -12,7 +12,7 @@ $Shortcuts = @(
         Name = "Office 365"
         Type = "url"
         Path = "https://portal.office.com"
-        Mode = "Uninstall"
+        Mode = "Install"
     },
     @{
         Name = "Google Earth"
