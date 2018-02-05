@@ -35,7 +35,7 @@ function Install-EXE {
             Start-Process `$Uninstaller -ArgumentList `$UninstArgs -Wait
         }
         Else {
-            Write-Error "Could not find uninstaller, aborting" #Give error if uninstaller is not present
+            Write-Error "Could not find uninstaller, aborting"
         }
     }
 }
