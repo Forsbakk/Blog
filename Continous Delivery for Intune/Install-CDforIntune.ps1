@@ -110,19 +110,21 @@ function Install-SC {
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Continous%20Delivery%20for%20Intune/Applications/config.json" -OutFile `$AppConfig
 `$Applications = Get-Content `$AppConfig | ConvertFrom-Json
 
-`$SCConfig = `$env:TEMP + "\SCConfig.JSON"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Continous%20Delivery%20for%20Intune/Shortcuts/config.json" -OutFile `$SCConfig
-`$SCs = Get-Content `$SCConfig | ConvertFrom-Json
-
 foreach (`$app in `$Applications) {
     Install-EXE -AppName `$app.Name -Installer `$app.Installer -InstArgs `$app.InstArgs -Uninstaller `$app.Uninstaller -UninstArgs `$app.UninstArgs -appLocURL `$app.appLocURL -wrkDir `$app.wrkDir -detection `$app.detection -Mode `$app.Mode
 }
+
+Remove-Item `$AppConfig -Force
+
+`$SCConfig = `$env:TEMP + "\SCConfig.JSON"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Continous%20Delivery%20for%20Intune/Shortcuts/config.json" -OutFile `$SCConfig
+`$SCs = Get-Content `$SCConfig | ConvertFrom-Json
 
 foreach (`$sc in `$SCs) {
     Install-SC -SCName `$sc.Name -SCType `$sc.Type -Path `$sc.Path -WorkingDir `$sc.WorkingDir -Arguments `$sc.Arguments -IconFileandType `$sc.IconFileandType -Description `$sc.Description -Mode `$sc.Mode
 }
 
-Remove-Item `$AppConfig -Force
+Remove-Item `$SCConfig -Force
 "@
 
 
