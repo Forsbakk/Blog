@@ -11,7 +11,7 @@ function Install-EXE {
         `$detection,
         `$Mode
     )
-    If (`$mode -eq "Install") { #INSTALL MODE
+    If (`$mode -eq "Install") {
         Write-Host "Starting installation script for `$AppName"
         Write-Host "Detecting previous installations"
     
@@ -19,8 +19,8 @@ function Install-EXE {
     
             Write-Host "`$AppName is not detected, starting install"
 
-            Invoke-WebRequest -Uri `$appLocURL -OutFile `$wrkDir\`$Installer #Download the installer
-            Start-Process -FilePath `$wrkDir\`$Installer -ArgumentList `$InstArgs -Wait #Start the installer
+            Invoke-WebRequest -Uri `$appLocURL -OutFile `$wrkDir\`$Installer
+            Start-Process -FilePath `$wrkDir\`$Installer -ArgumentList `$InstArgs -Wait
             Remove-Item -Path `$wrkDir\`$Installer -Force #Clean up installation file
             If (!(Test-Path `$detection)) {
                 Write-Error "`$AppName not detected after installation" #Give error if application is not installed after installation
@@ -30,7 +30,7 @@ function Install-EXE {
             Write-Host "`$AppName detected, will NOT install"
         }
     }
-    elseif (`$mode -eq "Uninstall") { #UNINSTALL MODE
+    elseif (`$mode -eq "Uninstall") {
         If (Test-Path `$Uninstaller) {
             Start-Process `$Uninstaller -ArgumentList `$UninstArgs -Wait
         }
