@@ -15,7 +15,7 @@ function Install-EXE {
         Write-Host "Starting installation script for `$AppName"
         Write-Host "Detecting previous installations"
     
-        If (!(Test-Path `$detection)) { #Detects if current version is installed
+        If (!(Test-Path `$detection)) {
     
             Write-Host "`$AppName is not detected, starting install"
 
