@@ -136,4 +136,10 @@ $Script | Out-File "C:\Windows\Scripts\Start-ContinuousDelivery.ps1"
 $User = "SYSTEM"
 $Action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-Executionpolicy Bypass -File `"C:\Windows\Scripts\Start-ContinuousDelivery.ps1`""
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
-Register-ScheduledTask -Action $Action -Trigger $Trigger -User $User -RunLevel Highest -TaskName "Continuous delivery for Intune"
+try {
+    Register-ScheduledTask -Action $Action -Trigger $Trigger -User $User -RunLevel Highest -TaskName "Continuous delivery for Intune"
+}
+catch {
+    Write-Error "Could not resgister scheduled task"
+}
+Start-ScheduledTask -TaskName "Continuous delivery for Intune"
