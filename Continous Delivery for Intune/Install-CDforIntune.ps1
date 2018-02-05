@@ -63,14 +63,14 @@ function Install-SC {
     Elseif (`$Mode -eq "Install") {
         If (`$SCType -eq "lnk") {
             `$verPath = `$WorkingDir + "\" + `$Path
-            `$Detection = Test-Path `$verPath # Test workingdir + path
+            `$Detection = Test-Path `$verPath
             If (!(`$Detection)) { 
                 `$verPath = `$Path
-                `$Detection = Test-Path `$verPath #Test path
+                `$Detection = Test-Path `$verPath
                 If (!(`$Detection)) { 
                     `$verPath = `$Path -split ' +(?=(?:[^\"]*\"[^\"]*\")*[^\"]*`$)'
                     `$verPath = `$verPath[0] -replace '"',''
-                    `$Detection = Test-Path `$verPath #Test path without '"'
+                    `$Detection = Test-Path `$verPath
                 }
             }
         }
