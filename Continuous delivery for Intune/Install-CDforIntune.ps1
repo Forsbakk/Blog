@@ -107,7 +107,7 @@ function Install-SC {
 }
 
 `$AppConfig = `$env:TEMP + "\AppConfig.JSON"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Continous%20Delivery%20for%20Intune/Applications/config.json" -OutFile `$AppConfig
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Intune-Application-Installers/master/Continuous%20delivery%20for%20Intune/Applications/config.json" -OutFile `$AppConfig
 `$Applications = Get-Content `$AppConfig | ConvertFrom-Json
 
 foreach (`$app in `$Applications) {
@@ -117,7 +117,7 @@ foreach (`$app in `$Applications) {
 Remove-Item `$AppConfig -Force
 
 `$SCConfig = `$env:TEMP + "\SCConfig.JSON"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Continous%20Delivery%20for%20Intune/Shortcuts/config.json" -OutFile `$SCConfig
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Forsbakk/Intune-Application-Installers/master/Continuous%20delivery%20for%20Intune/Shortcuts/config.json" -OutFile `$SCConfig
 `$SCs = Get-Content `$SCConfig | ConvertFrom-Json
 
 foreach (`$sc in `$SCs) {
@@ -131,9 +131,9 @@ Remove-Item `$SCConfig -Force
 If (!(Test-Path "C:\Windows\Scripts")) {
     New-Item "C:\Windows\Scripts" -ItemType Directory
 }
-$Script | Out-File "C:\Windows\Scripts\Start-ContinousDelivery.ps1"
+$Script | Out-File "C:\Windows\Scripts\Start-ContinuousDelivery.ps1"
 
 $User = "SYSTEM"
-$Action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-Executionpolicy Bypass -File `"C:\Windows\Scripts\Start-ContinousDelivery.ps1`""
+$Action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-Executionpolicy Bypass -File `"C:\Windows\Scripts\Start-ContinuousDelivery.ps1`""
 $Trigger = New-ScheduledTaskTrigger -AtLogOn
-Register-ScheduledTask -Action $Action -Trigger $Trigger -User $User -RunLevel Highest -TaskName "Continous Delivery for Intune"
+Register-ScheduledTask -Action $Action -Trigger $Trigger -User $User -RunLevel Highest -TaskName "Continuous delivery for Intune"
