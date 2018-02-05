@@ -23,7 +23,7 @@ function Install-EXE {
             Start-Process -FilePath `$wrkDir\`$Installer -ArgumentList `$InstArgs -Wait
             Remove-Item -Path `$wrkDir\`$Installer -Force #Clean up installation file
             If (!(Test-Path `$detection)) {
-                Write-Error "`$AppName not detected after installation" #Give error if application is not installed after installation
+                Write-Error "`$AppName not detected after installation"
             }
         }
         Else { #App already detected
