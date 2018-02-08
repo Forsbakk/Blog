@@ -16,3 +16,10 @@ $Days = @(
     "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-men-s-50km-mass-start-classic-fnl-000100-.htm"
     "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-ladies-30km-mass-start-classic-fnl-000100-.htm"
 )
+
+$testURI = "https://www.olympic.org/pyeongchang-2018/results/en/luge/lugr073a-men-s-singles-trno-b00200-.htm"
+
+$data = Invoke-WebRequest -Uri $testURI
+
+$table = $data.ParsedHtml.Body.getElementsByTagName("TABLE") | Select InnerHTML
+$table.InnerHTML
