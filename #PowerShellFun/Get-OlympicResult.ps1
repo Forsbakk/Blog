@@ -24,8 +24,8 @@ function Get-OLResults {
             $URL
         )
     $page = Invoke-WebRequest $URL
-    $dataCond = $page.ParsedHtml.body.getElementsByClassName('or-msg') | Select-Object -ExpandProperty innerText
-    if ($dataCond -like "*Beklager, men ingen data er tilgjengelig for den valgte fasen*") {
+    $dataCond = $page.ParsedHtml.body.getElementsByTagName("h2") | Select-Object -ExpandProperty innerText
+    if ($dataCond -notcontains "Resultater") {
         Write-Output "NO DATA AVAILABLE"
     }
     else {
