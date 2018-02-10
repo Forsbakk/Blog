@@ -16,6 +16,9 @@
     "https://www.eurosport.no/ol/langrenn/event/langrenn-50-kilometer-klassisk-fellesstart-menn/"
     "https://www.eurosport.no/ol/langrenn/event/langrenn-30-kilometer-klassisk-fellesstart-menn/"
 )
+
+$Webhook = "" #INSERT YOUR WEBHOOK HERE
+
 function Get-OLResults {
         Param (
             $URL
@@ -73,13 +76,13 @@ Function Send-OLResults {
             $iProps = @{
                 "startGroup" = "true"
                 "activityTitle" = $i.Athlete
-                "activityText" = "Plassering: $($i.Place)"
+                "activityText" = "Placement: $($i.Place)"
                 "activityImage" = $i.athleteFlag
             }
             if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
                 $BNF = $true
                 $iProps += @{
-                    "activitySubtitle" = "Beste norske"
+                    "activitySubtitle" = "Best norwegian athlete"
                 }
             }
             $sec += $iProps
@@ -89,13 +92,13 @@ Function Send-OLResults {
             $iProps = @{
                 "startGroup" = "true"
                 "activityTitle" = $i.Athlete
-                "activityText" = "Plassering: $($i.Place)"
+                "activityText" = "Placement: $($i.Place)"
                 "activityImage" = $i.athleteFlag
             }
-            if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
+            if (($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") -and ($BNF -eq $false)) { 
                 $BNF = $true
                 $iProps += @{
-                    "activitySubtitle" = "Beste norske"
+                    "activitySubtitle" = "Best norwegian athlete"
                 }
             }
             $sec += $iProps
@@ -105,13 +108,13 @@ Function Send-OLResults {
             $iProps = @{
                 "startGroup" = "true"
                 "activityTitle" = $i.Athlete
-                "activityText" = "Plassering: $($i.Place)"
+                "activityText" = "Placement: $($i.Place)"
                 "activityImage" = $i.athleteFlag
             }
-            if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
+            if (($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") -and ($BNF -eq $false)) { 
                 $BNF = $true
                 $iProps += @{
-                    "activitySubtitle" = "Beste norske"
+                    "activitySubtitle" = "Best norwegian athlete"
                 }
             }
             $sec += $iProps
@@ -122,9 +125,9 @@ Function Send-OLResults {
             $iProps = @{
                 "startGroup" = "true"
                 "activityTitle" = $i.Athlete
-                "activityText" = "Plassering: $($i.Place)"
+                "activityText" = "Placement: $($i.Place)"
                 "activityImage" = $i.athleteFlag
-                "activitySubtitle" = "Beste norske"
+                "activitySubtitle" = "Best norwegian athlete"
             }
             $sec += $iProps
         }
@@ -138,6 +141,10 @@ Function Send-OLResults {
         }
         $obj = New-Object psobject -Property $properties
         $body = $obj | ConvertTo-Json -Compress
-        Invoke-RestMethod -Uri $WH -Method Post -Body $body -ContentType "application/json;charset=UTF-8" | Out-Null
+        Invoke-RestMethod -Uri $Webhook -Method Post -Body $body -ContentType "application/json;charset=UTF-8" | Out-Null
     }
+}
+
+foreach ($day in $Days) {
+    Send-OLResults -URL $day -WH $Webhook
 }
