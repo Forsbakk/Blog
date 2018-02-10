@@ -1,24 +1,24 @@
-$Days = @(
+﻿$Days = @(
     "https://www.eurosport.no/ol/langrenn/event/langrenn-74km-75km-skiathlon-kvinner"
     "https://www.eurosport.no/ol/hurtiglop-skoyter/event/hurtiglop-skoyter-5000-meter-menn/"
     "https://www.eurosport.no/ol/skiskyting/event/skiskyting-12-5-km-jaktstart-menn/"
     "https://www.eurosport.no/ol/langrenn/event/langrenn-individuell-klassisk-sprint-menn/"
     "https://www.eurosport.no/ol/skiskyting/event/skiskyting-15-km-individuelt-kvinner/"
     "https://www.eurosport.no/ol/alpint/event/alpint-super-g-menn/"
-    "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-men-s-15km-free-fnl-000100-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/ski-jumping/result-men-s-large-hill-individual-fnl-0002sj-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-men-s-4-x-10km-relay-fnl-000100-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/speed-skating/result-men-s-500m-fnl-000100-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/nordic-combined/results-individual-gundersen-lh-10km-fnl-0001cc-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-ladies-team-sprint-free-fnl-000100-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/alpine-skiing/results-men-s-slalom-fnl-000200-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/biathlon/results-men-s-4x7-5km-relay-fnl-000100-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-men-s-50km-mass-start-classic-fnl-000100-.htm"
-    "https://www.olympic.org/pyeongchang-2018/results/en/cross-country-skiing/results-ladies-30km-mass-start-classic-fnl-000100-.htm"
+    "https://www.eurosport.no/ol/langrenn/event/langrenn-15-km-fristil-menn/"
+    "https://www.eurosport.no/ol/hopp/event/hopp-stor-bakke-menn/"
+    "https://www.eurosport.no/ol/langrenn/event/langrenn-4x10-km-stafett-menn/"
+    "https://www.eurosport.no/ol/hurtiglop-skoyter/event/hurtiglop-skoyter-500-meter-menn/"
+    "https://www.eurosport.no/ol/kombinert/event/kombinert-stor-bakke-individuell/"
+    "https://www.eurosport.no/ol/langrenn/event/langrenn-lagsprint-fristil-kvinner/"
+    "https://www.eurosport.no/ol/alpint/event/alpint-slalam-menn/"
+    "https://www.eurosport.no/ol/skiskyting/event/skiskyting-4x7-5-km-stafett-menn/"
+    "https://www.eurosport.no/ol/langrenn/event/langrenn-50-kilometer-klassisk-fellesstart-menn/"
+    "https://www.eurosport.no/ol/langrenn/event/langrenn-30-kilometer-klassisk-fellesstart-menn/"
 )
 
-$URL = "https://www.eurosport.no/ol/alpint/event/alpint-utfor-menn/phase/asm010o01/"
-$WH = "https://outlook.office.com/webhook/a709d725-19f0-44cc-9a19-423144c0e90e@5eca1ec4-5a64-407b-9778-9f9147b7a293/IncomingWebhook/add628ae1f6e42879095aa7c724d148b/3eb3235c-90a4-4b04-8ec4-88c3dea3e446"
+$URL = 
+$WH = 
 
 function Get-OLResults {
         Param (
@@ -52,6 +52,10 @@ function Get-OLResults {
 }
 
 Function Invoke-OLResults {
+    Param (
+        $URL,
+        $WH
+    )
     $data = Get-OLResults -URL $URL
     $sec = @()
     $BNF = $false
@@ -59,7 +63,7 @@ Function Invoke-OLResults {
     foreach ($i in $first) {
         $iProps = @{
             "startGroup" = "true"
-            "activityTitle" = "**$($i.Athlete)**"
+            "activityTitle" = $i.Athlete
             "activityText" = "Plassering: $($i.Place)"
             "activityImage" = $i.athleteFlag
         }
@@ -75,7 +79,7 @@ Function Invoke-OLResults {
     foreach ($i in $second) {
         $iProps = @{
             "startGroup" = "true"
-            "activityTitle" = "**$($i.Athlete)**"
+            "activityTitle" = $i.Athlete
             "activityText" = "Plassering: $($i.Place)"
             "activityImage" = $i.athleteFlag
         }
@@ -91,7 +95,7 @@ Function Invoke-OLResults {
     foreach ($i in $third) {
         $iProps = @{
             "startGroup" = "true"
-            "activityTitle" = "**$($i.Athlete)**"
+            "activityTitle" = $i.Athlete
             "activityText" = "Plassering: $($i.Place)"
             "activityImage" = $i.athleteFlag
         }
@@ -108,7 +112,7 @@ Function Invoke-OLResults {
         $i = $data | Where-Object { $_.Place -eq $bn }
         $iProps = @{
             "startGroup" = "true"
-            "activityTitle" = "**$($i.Athlete)**"
+            "activityTitle" = $i.Athlete
             "activityText" = "Plassering: $($i.Place)"
             "activityImage" = $i.athleteFlag
             "activitySubtitle" = "Beste norske"
@@ -124,7 +128,8 @@ Function Invoke-OLResults {
         "sections" = $sec
     }
     $obj = New-Object psobject -Property $properties
-    $body = $obj | ConvertTo-Json -Compress
-    Invoke-RestMethod -Uri $WH -Method Post -Body $body
+    $body = $obj | ConvertTo-Json
+    Write-Host $body
+    #Invoke-RestMethod -Uri $WH -Method Post -Body $body -ContentType "application/json;charset=UTF-8" | Out-Null
 }
-Invoke-OLResults
+Invoke-OLResults -URL "https://www.eurosport.no/ol/langrenn/event/langrenn-74km-75km-skiathlon-kvinner" -WH ""
