@@ -16,120 +16,128 @@
     "https://www.eurosport.no/ol/langrenn/event/langrenn-50-kilometer-klassisk-fellesstart-menn/"
     "https://www.eurosport.no/ol/langrenn/event/langrenn-30-kilometer-klassisk-fellesstart-menn/"
 )
-
-$URL = 
-$WH = 
-
 function Get-OLResults {
         Param (
             $URL
         )
     $page = Invoke-WebRequest $URL
-    $table = $page.ParsedHtml.body.getElementsByTagName('Table') | Select-Object Rows
-    $hRow = $true
+    $dataCond = $page.ParsedHtml.body.getElementsByClassName('or-msg') | Select-Object -ExpandProperty innerText
+    if ($dataCond -like "*Beklager, men ingen data er tilgjengelig for den valgte fasen*") {
+        Write-Output "NO DATA AVAILABLE"
+    }
+    else {
+        $raceTitle = $page.ParsedHtml.title
+        $table = $page.ParsedHtml.body.getElementsByTagName('Table') | Select-Object Rows
+        $hRow = $true
+        ForEach ($row in $table.rows) {
+            if ($hRow -eq $true) {
+                $hRow = $false
+            }
+            else {
+                $cells = $row.cells
+                $placement = $cells[0].innerText
+                $athlete = $cells[2].innerText
+                $athlete = $athlete.Trim()
+                $athleteFlag = $cells[2].getElementsByTagName("IMG") | Select-Object -ExpandProperty Src
+            }
+            $athleteFlag = $athleteFlag -replace "about:","https://www.eurosport.no"
 
-    ForEach ($row in $table.rows) {
-        if ($hRow -eq $true) {
-            $hRow = $false
+            $properties = @{
+                Place = $placement
+                Athlete = $athlete
+                athleteFlag = $athleteFlag
+                raceTitle = $raceTitle
+            }
+            $obj = New-Object psobject -Property $properties
+            Write-Output $obj
         }
-        else {
-            $cells = $row.cells
-            $placement = $cells[0].innerText
-            $athlete = $cells[2].innerText
-            $athlete = $athlete.Trim()
-            $athleteFlag = $cells[2].getElementsByTagName("IMG") | Select-Object -ExpandProperty Src
-        }
-        $athleteFlag = $athleteFlag -replace "about:","https://www.eurosport.no"
-
-        $properties = @{
-            Place = $placement
-            Athlete = $athlete
-            athleteFlag = $athleteFlag
-        }
-        $obj = New-Object psobject -Property $properties
-        Write-Output $obj
     }
 }
-
-Function Invoke-OLResults {
+Function Send-OLResults {
     Param (
         $URL,
         $WH
     )
     $data = Get-OLResults -URL $URL
-    $sec = @()
-    $BNF = $false
-    $first = $data | Where-Object { ($_.Place -eq "1") -or ($_.Place -eq "=1") }
-    foreach ($i in $first) {
-        $iProps = @{
-            "startGroup" = "true"
-            "activityTitle" = $i.Athlete
-            "activityText" = "Plassering: $($i.Place)"
-            "activityImage" = $i.athleteFlag
+    if ($data -eq "NO DATA AVAILABLE") {}
+    else {
+        $sec = @()
+        $BNF = $false
+        $RTF = $false
+        $first = $data | Where-Object { ($_.Place -eq "1") -or ($_.Place -eq "=1") }
+        foreach ($i in $first) {
+            if ($RTF -eq $false) {
+                $raceTitle = $i.raceTitle
+                $RTF = $true
+            }
+            $iProps = @{
+                "startGroup" = "true"
+                "activityTitle" = $i.Athlete
+                "activityText" = "Plassering: $($i.Place)"
+                "activityImage" = $i.athleteFlag
+            }
+            if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
+                $BNF = $true
+                $iProps += @{
+                    "activitySubtitle" = "Beste norske"
+                }
+            }
+            $sec += $iProps
         }
-        if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
-            $BNF = $true
-            $iProps += @{
+        $second = $data | Where-Object { ($_.Place -eq "2") -or ($_.Place -eq "=2") }
+        foreach ($i in $second) {
+            $iProps = @{
+                "startGroup" = "true"
+                "activityTitle" = $i.Athlete
+                "activityText" = "Plassering: $($i.Place)"
+                "activityImage" = $i.athleteFlag
+            }
+            if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
+                $BNF = $true
+                $iProps += @{
+                    "activitySubtitle" = "Beste norske"
+                }
+            }
+            $sec += $iProps
+        }
+        $third = $data | Where-Object { ($_.Place -eq "3") -or ($_.Place -eq "=3") }
+        foreach ($i in $third) {
+            $iProps = @{
+                "startGroup" = "true"
+                "activityTitle" = $i.Athlete
+                "activityText" = "Plassering: $($i.Place)"
+                "activityImage" = $i.athleteFlag
+            }
+            if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
+                $BNF = $true
+                $iProps += @{
+                    "activitySubtitle" = "Beste norske"
+                }
+            }
+            $sec += $iProps
+        }
+        if ($BNF -eq $false) {
+            $bn = ($data | Where-Object { $_.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png" } | Measure-Object -Property place -Minimum).Minimum
+            $i = $data | Where-Object { $_.Place -eq $bn }
+            $iProps = @{
+                "startGroup" = "true"
+                "activityTitle" = $i.Athlete
+                "activityText" = "Plassering: $($i.Place)"
+                "activityImage" = $i.athleteFlag
                 "activitySubtitle" = "Beste norske"
             }
+            $sec += $iProps
         }
-        $sec += $iProps
+        $properties = @{
+            "@type" = "MessageCard"
+            "@context" = "http://schema.org/extensions"
+            "summary" = $raceTitle
+            "themeColor" = "0075FF"
+            "title" = $raceTitle
+            "sections" = $sec
+        }
+        $obj = New-Object psobject -Property $properties
+        $body = $obj | ConvertTo-Json -Compress
+        Invoke-RestMethod -Uri $WH -Method Post -Body $body -ContentType "application/json;charset=UTF-8" | Out-Null
     }
-    $second = $data | Where-Object { ($_.Place -eq "2") -or ($_.Place -eq "=2") }
-    foreach ($i in $second) {
-        $iProps = @{
-            "startGroup" = "true"
-            "activityTitle" = $i.Athlete
-            "activityText" = "Plassering: $($i.Place)"
-            "activityImage" = $i.athleteFlag
-        }
-        if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
-            $BNF = $true
-            $iProps += @{
-                "activitySubtitle" = "Beste norske"
-            }
-        }
-        $sec += $iProps
-    }
-    $third = $data | Where-Object { ($_.Place -eq "3") -or ($_.Place -eq "=3") }
-    foreach ($i in $third) {
-        $iProps = @{
-            "startGroup" = "true"
-            "activityTitle" = $i.Athlete
-            "activityText" = "Plassering: $($i.Place)"
-            "activityImage" = $i.athleteFlag
-        }
-        if ($i.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png") { 
-            $BNF = $true
-            $iProps += @{
-                "activitySubtitle" = "Beste norske"
-            }
-        }
-        $sec += $iProps
-    }
-    if ($BNF -eq $false) {
-        $bn = ($data | Where-Object { $_.athleteFlag -eq "https://www.eurosport.no/d3images/ml/flags/s/NOR.png" } | Measure-Object -Property place -Minimum).Minimum
-        $i = $data | Where-Object { $_.Place -eq $bn }
-        $iProps = @{
-            "startGroup" = "true"
-            "activityTitle" = $i.Athlete
-            "activityText" = "Plassering: $($i.Place)"
-            "activityImage" = $i.athleteFlag
-            "activitySubtitle" = "Beste norske"
-        }
-        $sec += $iProps
-    }
-    $properties = @{
-        "@type" = "MessageCard"
-        "@context" = "http://schema.org/extensions"
-        "summary" = "OL rapport"
-        "themeColor" = "0075FF"
-        "title" = "OL rapport"
-        "sections" = $sec
-    }
-    $obj = New-Object psobject -Property $properties
-    $body = $obj | ConvertTo-Json
-    Write-Host $body
-    #Invoke-RestMethod -Uri $WH -Method Post -Body $body -ContentType "application/json;charset=UTF-8" | Out-Null
 }
-Invoke-OLResults -URL "https://www.eurosport.no/ol/langrenn/event/langrenn-74km-75km-skiathlon-kvinner" -WH ""
