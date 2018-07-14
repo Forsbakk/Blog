@@ -19,7 +19,7 @@ If (!(Test-Path "C:\Windows\Scripts")) {
     New-Item "C:\Windows\Scripts" -ItemType Directory
 }
 
-$ScriptLocURI = "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous%20delivery%20for%20Intune%20v2/Install/CDforIntuneScript/$($cfg.File)"
+$ScriptLocURI = "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous%20delivery%20for%20Intune%20v2/Install/CDforIntuneScript/$($cfg.Name)"
 
 Invoke-WebRequest -Uri $ScriptLocURI -OutFile "C:\Windows\Scripts\Start-ContinuousDelivery.ps1"
 
