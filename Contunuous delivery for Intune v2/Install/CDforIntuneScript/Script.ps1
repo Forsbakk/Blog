@@ -22,7 +22,7 @@ function Write-Log {
 }
 
 
-$cfg = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Forsbakk/Continuous-delivery-for-Intune/master/versioncontrol/config.json" -UseBasicParsing
+$cfg = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous%20delivery%20for%20Intune%20v2/versioncontrol/config.json" -UseBasicParsing
 $cfg = $cfg | Where-Object { $_.Name -eq $BranchName }
 
 if ($cfg.Version -eq $Version) {
@@ -31,7 +31,7 @@ if ($cfg.Version -eq $Version) {
 else {
     Write-Log -Value "Newer version found, upgrading" -Severity 1 -Component "Update"
 
-    $ScriptLocURI = "https://raw.githubusercontent.com/Forsbakk/Continuous-delivery-for-Intune/master/Install/Install-CDforIntune.ps1"
+    $ScriptLocURI = "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous delivery for Intune v2/Install/Install-CDforIntune/Install-CDforIntune.ps1"
     Invoke-WebRequest -Uri $ScriptLocURI -OutFile "$env:TEMP\Install-CDforIntune.ps1"
 
     Start-Process "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$env:TEMP\Install-CDforIntune.ps1`" -BranchName $BranchName -WaitFor $PID -CleanUp $true"
