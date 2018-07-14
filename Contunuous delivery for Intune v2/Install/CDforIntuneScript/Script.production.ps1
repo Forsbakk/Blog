@@ -43,7 +43,7 @@ $SerialNumber = Get-WmiObject -Class Win32_bios | Select-Object -ExpandProperty 
 
 $CurrentName = $env:COMPUTERNAME
 If (!($CurrentName -eq $SerialNumber)) {
-    Rename-Computer -ComputerName $CurrentName -NewName $SerialNumber
+    Rename-Computer -ComputerName $CurrentName -NewName $SerialNumber -Force
 }
 
 
