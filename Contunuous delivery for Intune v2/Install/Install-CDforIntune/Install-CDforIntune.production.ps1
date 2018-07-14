@@ -1,5 +1,5 @@
-﻿Param(
-    $BranchName = "",
+Param(
+    $BranchName = "production",
     $WaitFor = $null,
     $CleanUp = $false
 )

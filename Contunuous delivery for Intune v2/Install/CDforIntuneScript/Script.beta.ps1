@@ -1,5 +1,5 @@
-﻿$BranchName = ""
-$Version = ""
+$BranchName = "beta"
+$Version = "1.0.0"
 
 
 function Write-Log {
