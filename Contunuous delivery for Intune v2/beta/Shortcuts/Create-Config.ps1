@@ -1,14 +1,5 @@
 $Shortcuts = @(
     @{
-        Name            = "GIMP 2.10"
-        Type            = "lnk"
-        Path            = "C:\Program Files\GIMP 2\bin\gimp-2.10.exe"
-        WorkingDir      = "%USERPROFILE%"
-        IconFileandType = "C:\Program Files\GIMP 2\bin\gimp-2.10.exe, 0"
-        Description     = "GIMP 2.10"
-        Mode            = "Install"
-    },
-    @{
         Name            = "Google Earth"
         Type            = "lnk"
         Path            = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
@@ -34,7 +25,7 @@ $Shortcuts = @(
         Path            = "C:\Program Files (x86)\Microsoft Office\root\Office16\winword.exe"
         WorkingDir      = "C:\Program Files (x86)\Microsoft Office\root\Office16\"
         IconFileandType = "C:\Program Files (x86)\Microsoft Office\root\Office16\winword.exe, 0"
-        Description     = "Word 2016"
+        Description     = "Word"
         Mode            = "Install"
     },
     @{
@@ -43,7 +34,7 @@ $Shortcuts = @(
         Path            = "C:\Program Files (x86)\Microsoft Office\root\Office16\excel.exe"
         WorkingDir      = "C:\Program Files (x86)\Microsoft Office\root\Office16\"
         IconFileandType = "C:\Program Files (x86)\Microsoft Office\root\Office16\excel.exe, 0"
-        Description     = "Excel 2016"
+        Description     = "Excel"
         Mode            = "Install"
     },
     @{
@@ -52,7 +43,7 @@ $Shortcuts = @(
         Path            = "C:\Program Files (x86)\Microsoft Office\root\Office16\powerpnt.exe"
         WorkingDir      = "C:\Program Files (x86)\Microsoft Office\root\Office16\"
         IconFileandType = "C:\Program Files (x86)\Microsoft Office\root\Office16\powerpnt.exe, 0"
-        Description     = "PowerPoint 2016"
+        Description     = "PowerPoint"
         Mode            = "Install"
     }
 )
