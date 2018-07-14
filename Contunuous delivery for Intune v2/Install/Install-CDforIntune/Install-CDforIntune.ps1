@@ -1,5 +1,5 @@
 ﻿Param(
-    $BranchName = "",
+    $BranchName = " ",
     $WaitFor = $null,
     $CleanUp = $false
 )

@@ -22,7 +22,7 @@ function Write-Log {
 }
 
 
-$cfg = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Forsbakk/Continuous-delivery-for-Intune/master/versioncontrol/config.json" -UseBasicParsing
+$cfg = Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous%20delivery%20for%20Intune%20v2/versioncontrol/config.json" -UseBasicParsing
 $cfg = $cfg | Where-Object { $_.Name -eq $BranchName }
 
 if ($cfg.Version -eq $Version) {
@@ -31,66 +31,19 @@ if ($cfg.Version -eq $Version) {
 else {
     Write-Log -Value "Newer version found, upgrading" -Severity 1 -Component "Update"
 
-    $ScriptLocURI = "https://raw.githubusercontent.com/Forsbakk/Continuous-delivery-for-Intune/master/Install/Install-CDforIntune.ps1"
+    $ScriptLocURI = "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous delivery for Intune v2/Install/Install-CDforIntune/Install-CDforIntune.ps1"
     Invoke-WebRequest -Uri $ScriptLocURI -OutFile "$env:TEMP\Install-CDforIntune.ps1"
 
-    Start-Process "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$env:TEMP\Install-CDforIntune.ps1`" -BranchName $BranchName -WaitFor $PID -CleanUp $true"
+    Start-Process "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$env:TEMP\Install-CDforIntune.ps1`" -BranchName $BranchName -WaitFor $PID -CleanUp $true" -WindowStyle Hidden
     break
 }
 
 
 $SerialNumber = Get-WmiObject -Class Win32_bios | Select-Object -ExpandProperty SerialNumber
-$Manufacturer = Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty Manufacturer
-If ($Manufacturer -eq "Acer") {
-    $NewName = $SerialNumber.Substring(10, 12) -replace " "
-    $NewName = "A" + $NewName
-}
-Else {
-    If ($SerialNumber.Length -ge 15) {
-        $NewName = $SerialNumber.Substring(0, 15) -replace " "
-    }
-    else {
-        $NewName = $SerialNumber
-    }
-}
+
 $CurrentName = $env:COMPUTERNAME
-If (!($CurrentName -eq $NewName)) {
-    Rename-Computer -ComputerName $CurrentName -NewName $NewName
-}
-
-
-Write-Log -Value "Checking Windows 10 activation status" -Severity 1 -Component "slmgr"
-
-$licenced = $false
-$lic = Get-WmiObject SoftwareLicensingProduct -Filter "ApplicationID = '55c92734-d682-4d71-983e-d6ec3f16059f'" -Property LicenseStatus -ErrorAction Stop
-:outer foreach ($i in $lic) {
-    if ($i.LicenseStatus -eq "1") {
-        Write-Log -Value "Windows 10 is licensed" -Severity 1 -Component "slmgr"
-        $licenced = $true
-        break outer
-    }
-}
-
-if ($licenced -eq $false) {
-    Write-Log -Value "Windows 10 was unlicensed; activating" -Severity 2 -Component "slmgr"
-    $ClientKey = "NW6C2-QMPVW-D7KKK-3GKT6-VCFB2"
-    $kmshost = "10.85.16.21"
-
-    $KMSservice = Get-WMIObject -query "select * from SoftwareLicensingService"
-    $KMSservice.InstallProductKey($ClientKey)
-    $KMSservice.SetKeyManagementServiceMachine($kmshost)
-    $KMSservice.RefreshLicenseStatus()
-
-    :outer foreach ($i in $lic) {
-        if ($i.LicenseStatus -eq "1") {
-            Write-Log -Value "Windows 10 is licensed" -Severity 1 -Component "slmgr"
-            $licenced = $true
-            break outer
-        }
-    }
-    if ($licenced -eq $false) {
-        Write-Log -Value "Windows 10 failed to license" -Severity 3 -Component "slmgr"
-    }
+If (!($CurrentName -eq $SerialNumber)) {
+    Rename-Computer -ComputerName $CurrentName -NewName $SerialNumber
 }
 
 
@@ -293,8 +246,3 @@ ForEach ($regfile in $regfiles) {
         Write-Log -Value "Regedit settings is detected, aborting install; $($regfile.URL)" -Severity 1 -Component "Regedit"
     }
 }
-
-
-
-
-
