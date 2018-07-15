@@ -45,6 +45,15 @@ $Shortcuts = @(
         IconFileandType = "C:\Program Files (x86)\Microsoft Office\root\Office16\powerpnt.exe, 0"
         Description     = "PowerPoint"
         Mode            = "Install"
+    },
+    @{
+        Name            = "Outlook"
+        Type            = "lnk"
+        Path            = "C:\Program Files (x86)\Microsoft Office\root\Office16\outlook.exe"
+        WorkingDir      = "C:\Program Files (x86)\Microsoft Office\root\Office16\"
+        IconFileandType = "C:\Program Files (x86)\Microsoft Office\root\Office16\outlook.exe, 0"
+        Description     = "PowerPoint"
+        Mode            = "Install"
     }
 )
 $Shortcuts | ConvertTo-Json -Compress | Out-File "$PSScriptRoot\config.json" -Encoding default
