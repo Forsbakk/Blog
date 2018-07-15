@@ -1,8 +1,8 @@
-﻿$User = "jonas@M365EDU402934.OnMicrosoft.com" #Change this to your username
+﻿$User = "jonas@m365edu402934.onmicrosoft.com" #Change this to your username
 $JSONFilesToInstall = Get-ChildItem $PSScriptRoot | Where-Object { $_.Extension -eq ".json" } #Location of JSONS
 $UserGroup = "All Users" #User group to deploy production material
 $BetaUserGroup = "Beta Users" #User group to create & deploy beta material
-$CDPath = "$PSScriptRoot\CD4Intune"
+$CDPath = "$PSScriptRoot\CD4Intune" #Temporary path for CD-files
 $CDForIntuneProd = "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous%20delivery%20for%20Intune%20v2/Install/Install-CDforIntune/Install-CDforIntune.production.ps1"
 $CDForIntuneBeta = "https://raw.githubusercontent.com/Forsbakk/Blog/master/Contunuous%20delivery%20for%20Intune%20v2/Install/Install-CDforIntune/Install-CDforIntune.beta.ps1"
 
@@ -81,12 +81,46 @@ else {
     $global:authToken = Get-AuthToken -User $User
 }
 
+#Clean up crap that comes with a demo tennant
+try {
+    $uri = "https://graph.microsoft.com/Beta/deviceManagement/deviceConfigurations"
+    $Configurations = (Invoke-RestMethod -Uri $uri -Headers $authToken -Method Get).Value
+}
+
+catch {
+    $ex = $_.Exception
+    $errorResponse = $ex.Response.GetResponseStream()
+    $reader = New-Object System.IO.StreamReader($errorResponse)
+    $reader.BaseStream.Position = 0
+    $reader.DiscardBufferedData()
+    $responseBody = $reader.ReadToEnd();
+    Write-Host "Response content:`n$responseBody" -f Red
+    Write-Error "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
+}
+ForEach ($cfg in $Configurations) {
+    try {
+        $uri = "https://graph.microsoft.com/Beta/deviceManagement/deviceConfigurations/$($cfg.id)"
+        Invoke-RestMethod -Uri $uri -Headers $authToken -Method Delete
+    }
+
+    catch {
+        $ex = $_.Exception
+        $errorResponse = $ex.Response.GetResponseStream()
+        $reader = New-Object System.IO.StreamReader($errorResponse)
+        $reader.BaseStream.Position = 0
+        $reader.DiscardBufferedData()
+        $responseBody = $reader.ReadToEnd();
+        Write-Host "Response content:`n$responseBody" -f Red
+        Write-Error "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
+    }
+}
+
 #Create $BetaUserGroup
 $properties = @{
-    displayName     = "$BetaUserGroup"
-    mailEnabled     = "false"
-    mailNickname    = "nomail"
-    securityEnabled = "true"
+    "displayName"     = $BetaUserGroup
+    "mailEnabled"     = $false
+    "mailNickname"    = "nomail"
+    "securityEnabled" = $true
 }
 $JSON = $properties | ConvertTo-Json -Compress
 
@@ -346,7 +380,7 @@ $properties = @{
 $JSON = $properties | ConvertTo-Json -Depth 3 -Compress
 
 try {
-    $uri = "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/$($prodscript.id)/assign"
+    $uri = "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/$($betascript.id)/assign"
     Invoke-RestMethod -Uri $uri -Headers $authToken -Method Post -Body $JSON -ContentType "application/json"
 }
 catch {
