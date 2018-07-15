@@ -81,7 +81,7 @@ else {
     $global:authToken = Get-AuthToken -User $User
 }
 
-#Clean up crap that comes with a demo tennant
+#Clean up crap that comes with a demo tenant
 try {
     $uri = "https://graph.microsoft.com/Beta/deviceManagement/deviceConfigurations"
     $Configurations = (Invoke-RestMethod -Uri $uri -Headers $authToken -Method Get).Value
@@ -259,7 +259,7 @@ foreach ($file in $JSONFilesToInstall) {
     }
 }
 
-#Checks for temp directory for CD-files
+#Checks if temp directory for CD-files exists
 $nocleanup = Test-Path $CDPath
 If (!($nocleanup)) {
     New-Item $CDPath -ItemType Directory | Out-Null
