@@ -81,7 +81,7 @@ else {
     $global:authToken = Get-AuthToken -User $User
 }
 
-#Clean up crap that comes with a demo tenant
+#Clean up Device Configuration that comes with a demo tenant
 try {
     $uri = "https://graph.microsoft.com/Beta/deviceManagement/deviceConfigurations"
     $Configurations = (Invoke-RestMethod -Uri $uri -Headers $authToken -Method Get).Value
@@ -100,6 +100,40 @@ catch {
 ForEach ($cfg in $Configurations) {
     try {
         $uri = "https://graph.microsoft.com/Beta/deviceManagement/deviceConfigurations/$($cfg.id)"
+        Invoke-RestMethod -Uri $uri -Headers $authToken -Method Delete
+    }
+
+    catch {
+        $ex = $_.Exception
+        $errorResponse = $ex.Response.GetResponseStream()
+        $reader = New-Object System.IO.StreamReader($errorResponse)
+        $reader.BaseStream.Position = 0
+        $reader.DiscardBufferedData()
+        $responseBody = $reader.ReadToEnd();
+        Write-Host "Response content:`n$responseBody" -f Red
+        Write-Error "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
+    }
+}
+
+#Clear any Office 365 deployment (just in case)
+try {
+    $uri = "https://graph.microsoft.com/Beta/deviceAppManagement/mobileApps"
+    $Apps = (Invoke-RestMethod -Uri $uri -Headers $authToken -Method Get).Value | Where-Object { $_.'@odata.type' -eq "#microsoft.graph.officeSuiteApp" }
+}
+
+catch {
+    $ex = $_.Exception
+    $errorResponse = $ex.Response.GetResponseStream()
+    $reader = New-Object System.IO.StreamReader($errorResponse)
+    $reader.BaseStream.Position = 0
+    $reader.DiscardBufferedData()
+    $responseBody = $reader.ReadToEnd();
+    Write-Host "Response content:`n$responseBody" -f Red
+    Write-Error "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
+}
+ForEach ($app in $Apps) {
+    try {
+        $uri = "https://graph.microsoft.com/Beta/deviceAppManagement/mobileApps/$($app.id)"
         Invoke-RestMethod -Uri $uri -Headers $authToken -Method Delete
     }
 
