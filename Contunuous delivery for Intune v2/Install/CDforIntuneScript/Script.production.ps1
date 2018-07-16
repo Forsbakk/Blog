@@ -1,7 +1,6 @@
 $BranchName = "production"
-$Version = "1.0.3"
+$Version = "1.0.4"
 
-#added some config
 
 function Write-Log {
     Param(
@@ -139,8 +138,8 @@ foreach ($PS in $PSs) {
     Write-Log -Value "Detecting $($PS.Name)" -Severity 1 -Component "PowerShell"
     if (!($runDetectionRule -eq $true)) {
         $Arguments = "-Command $($PS.Command)"
-        Write-Log -Value "Starting powershell.exe with arguments:$($Arguments)" -Severity 1 -Component "PowerShell"
-        Start-Process -FilePath "powershell.exe" -ArgumentList $PS.Arguments
+        Write-Log -Value "Starting powershell.exe with arguments: $Arguments" -Severity 1 -Component "PowerShell"
+        Start-Process -FilePath "powershell.exe" -ArgumentList $Arguments
     }
     else {
         Write-Log -Value "$($PS.Name) is already run" -Severity 1 -Component "PowerShell"
