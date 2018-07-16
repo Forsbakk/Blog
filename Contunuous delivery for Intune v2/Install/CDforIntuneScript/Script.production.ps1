@@ -1,6 +1,7 @@
 $BranchName = "production"
-$Version = "1.0.2"
+$Version = "1.0.3"
 
+#added some config
 
 function Write-Log {
     Param(

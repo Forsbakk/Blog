@@ -1,6 +1,7 @@
 ﻿$BranchName = " "
 $Version = " "
 
+#added some config
 
 function Write-Log {
     Param(

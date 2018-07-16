@@ -1,4 +1,4 @@
-﻿$User = "jonas@m365edu402934.onmicrosoft.com" #Change this to your username
+﻿$User = "admin@M365EDU713713.onmicrosoft.com" #Change this to your username
 $JSONFilesToInstall = Get-ChildItem $PSScriptRoot | Where-Object { $_.Extension -eq ".json" } #Location of JSONS
 $UserGroup = "All Users" #User group to deploy production material
 $BetaUserGroup = "Beta Users" #User group to create & deploy beta material
