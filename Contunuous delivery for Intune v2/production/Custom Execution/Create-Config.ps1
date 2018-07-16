@@ -14,7 +14,7 @@ $CustomExec = @(
         Execution      = @(
             @{
                 Execute   = "powershell.exe"
-                Arguments = "-ExecutionPolicy Bypass -File 'C:\Windows\Temp\Install-TS20DAFix.ps1'"
+                Arguments = "-ExecutionPolicy Bypass -File `"C:\Windows\Temp\Install-TS20DAFix.ps1`""
             }
         )
         Detection      = @(
