@@ -4,14 +4,6 @@ $ChocoPkgs = @(
         Mode = "install"
     },
     @{
-        Name = "gimp"
-        Mode = "install"
-    },
-    @{
-        Name = "audacity"
-        Mode = "install"
-    },
-    @{
         Name = "sccmtoolkit"
         Mode = "install"
     }
