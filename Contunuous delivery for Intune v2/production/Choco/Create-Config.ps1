@@ -12,6 +12,14 @@ $ChocoPkgs = @(
         Mode = "install"
     },
     @{
+        Name = "git"
+        Mode = "install"
+    },
+    @{
+        Name = "github-desktop"
+        Mode = "install"
+    }, 
+    @{
         Name = "vscode"
         Mode = "install"
     },
