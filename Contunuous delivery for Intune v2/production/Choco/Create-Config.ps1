@@ -14,18 +14,14 @@ $ChocoPkgs = @(
     @{
         Name = "git"
         Mode = "install"
-    },
-    @{
-        Name = "github-desktop"
-        Mode = "install"
     }, 
     @{
         Name = "vscode"
         Mode = "install"
     },
     @{
-        Name = "vscode-powershell"
+        Name = "spotify"
         Mode = "install"
-    }  
+    }
 )
 $ChocoPkgs | ConvertTo-Json -Compress | Out-File "$PSScriptRoot\config.json" -Encoding default
